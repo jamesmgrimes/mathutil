@@ -30,6 +30,11 @@ public class Hermite  extends Object
             Tnx4[i][2] = t ;
             Tnx4[i][3] = 1.0 ;
         }
+        // System.out.println ("i = 1, Tnx4[1][0,1,2,3] = " 
+        //              + Tnx4[1][0] + "," 
+        //              + Tnx4[1][1] + "," 
+        //              + Tnx4[1][2] + "," 
+        //              + Tnx4[1][3]) ;
         Matrix T = new Matrix (Tnx4) ;
         double [][] m = {
                 { 2.0, -2.0,  1.0,  1.0},
@@ -40,7 +45,27 @@ public class Hermite  extends Object
         Matrix M = new Matrix (m) ;
         TM = T.times (M) ;
     }
+    
+    public String toString()
+    {
+        String result = "Hermite Matrix T x M is\n" ;
+        double[][] mm = TM.getArray() ;
+        for (int irow = 0 ; irow < mm.length ; irow++)
+        {
+            result += "" + irow ;
+            for (int icol = 0 ; icol < mm[irow].length ; icol++)
+            {
+                result += "\t" + mm[irow][icol] ;
+            }
+            result += "\n" ;
+        }
+        return result ;
+    }
 
+    // hermite calculates the interpolated positions between two points and their
+    // first derivatives.  R3n vectors contains four rows of x,y,z triplets P0, P1, 
+    // M0, M1, where 0 and 1 are the beginning and end points, and P is the position
+    // and M is the 1st derivative. 
     public R3n hermite (R3n vectors)
     {
         Matrix PR = new Matrix (vectors.vectors) ;

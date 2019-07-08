@@ -183,7 +183,10 @@ public class R3n  extends Object
         Matrix PR = new Matrix (this.vectors) ;
         Matrix MPR = M.times(PR) ;
         Matrix R = T.times (MPR) ;
-
+        // can we do without Jama.Matrix?  All we're using it for is MxM, no?
+        // Oh.  Also making new matrices as a product
+        // but maybe it's OK because it doesn't copy when initialized with
+        // double[][]
         return new R3n(R.getArray()) ;  // getArray should avoid making copy
     }
 
