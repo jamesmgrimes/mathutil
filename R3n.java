@@ -171,7 +171,8 @@ public class R3n  extends Object
             Tnx4[i][2] = t ;
             Tnx4[i][3] = 1.0 ;
         }
-        Matrix T = new Matrix (Tnx4) ;
+        Matrix T = new Matrix (Tnx4) ;  // t^3, t^2, t, 1 for t from 0  to 1 in n steps
+                                        // 100x4
         double [][] m = 
             {
                 { 2.0, -2.0,  1.0,  1.0},
@@ -179,8 +180,8 @@ public class R3n  extends Object
                 { 0.0,  0.0,  1.0,  0.0},
                 { 1.0,  0.0,  0.0,  0.0} 
             } ;
-        Matrix M = new Matrix (m) ;
-        Matrix PR = new Matrix (this.vectors) ;
+        Matrix M = new Matrix (m) ;     // 4x4
+        Matrix PR = new Matrix (this.vectors) ;  // ? x 3
         Matrix MPR = M.times(PR) ;
         Matrix R = T.times (MPR) ;
         // can we do without Jama.Matrix?  All we're using it for is MxM, no?

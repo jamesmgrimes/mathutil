@@ -73,6 +73,24 @@ public class Hermite  extends Object
 
         return new R3n(R.getArray()) ;  // getArray should avoid making copy
     }
+    // hermite calculates the interpolated positions between two points and their
+    // first derivatives.  R3n vectors contains four rows of x,y,z triplets P0, P1, 
+    // M0, M1, where 0 and 1 are the beginning and end points, and P is the position
+    // and M is the 1st derivative. 
+    public R3n hermite (R3 p0, R3 p1, R3 m0, R3 m1)
+    {
+        // lotta overhead here BOZO
+        R3n pr = new R3n(4) ;
+        pr.set(0, p0) ;
+        pr.set(1, p1) ;
+        pr.set(2, m0) ;
+        pr.set(3, m1) ;
+        
+        Matrix PR = new Matrix (pr.vectors) ;
+        Matrix R = TM.times (PR) ;
+
+        return new R3n(R.getArray()) ;  // getArray should avoid making copy
+    }
 
 
 }
