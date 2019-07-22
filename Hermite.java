@@ -9,6 +9,7 @@ public class Hermite  extends Object
 {
 
     private Matrix TM = null ;
+    private int nsteps ;
 
     /* Hermite has nsteps steps, which results in n+1 positions */
     public Hermite(int nsteps) 
@@ -19,6 +20,7 @@ public class Hermite  extends Object
         // the P matrix is the dependent variable and needs to be done    //
         // each time.                                                     //
         ////////////////////////////////////////////////////////////////////
+        this.nsteps = nsteps ;
         double [][] Tnx4 = new double[nsteps+1][4] ;  
         for (int i = 0 ; i <= nsteps ; i++)
         {
@@ -92,6 +94,65 @@ public class Hermite  extends Object
         return new R3n(R.getArray()) ;  // getArray should avoid making copy
     }
 
+    ////////////////////////////////////////////////////////////////////
+    // Now interpolate between each of a set of n positions,          //
+    // returning a single series. Set the tangent vector depending on //
+    // whether we're on the ends or in the middle. And we really need //
+    // to assume there are more than two total, else we're going to   //
+    // have to test everything all the time. What's the point of      //
+    // having just two anyway? /                                      //
+    ////////////////////////////////////////////////////////////////////
+    public R3n hermitePath (R3n positions)
+    {
+        // Yikes - how big is our total path!?
+        // it is the size of herm x the number of positions, + 1.
+        // we discard the last interpolated position (except very last
+        // one) of each set because that's the same as the beginning
+        // of the next one.
+        R3n completePath = new R3n ( this.nsteps * (positions.size()-1) + 1) ;                                          
+        R3 m0 = null ;
+        R3 m1 = null ;
+        for ( int ipos = 0 ; ipos < positions.size()-1 ; ipos++)
+        {
+            R3 p0 = positions.get(ipos) ;
+            R3 p1 = positions.get(ipos+1) ;
+            R3 p2 = new R3() ;
+            // m0 will always be previous m1, unless this is first
+            if (ipos == 0) 
+            {
+                p2.set(positions.get(ipos+2)) ;
+                m0 = p1.minus(p0) ;
+                ////////////////////////////////////////////////////////
+                // this won't always work.  magnitude could be quite  //
+                // small, or enormous                               //
+                ////////////////////////////////////////////////////////
+                 m1 = p2.minus(p0).timesEquals(0.5) ; 
+            }
+            else if (ipos < positions.size() -2) 
+            {
+                p2.set(positions.get(ipos+2)) ;
+                m0 = new R3(m1) ;
+                m1 = p2.minus(p0).timesEquals(0.5) ;
+            }
+            else // no p2 available
+            {
+                m0 = new R3(m1) ;
+                m1 = p1.minus(p0) ;
+            }
+
+//             System.out.println ("p0=" + p0.toString()) ;
+//             System.out.println ("p1=" + p1.toString()) ;
+//             System.out.println ("m0=" + m0.toString()) ;
+//             System.out.println ("m1=" + m1.toString()) ;
+            R3n path = hermite(p0, p1, m0, m1) ;
+            // now put the result into completePath
+            // the last position of path will be overwritten
+            // by the first postion of the next one, but they
+            // should be identical
+            completePath.set (ipos*this.nsteps, path) ;
+        }
+        return completePath ;
+    }
 
 }
 
