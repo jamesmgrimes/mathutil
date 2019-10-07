@@ -17,6 +17,7 @@ CLASSFILES= \
 	R3.class \
 	P3n.class \
 	P3.class \
+	Functions.class \
 
 
 #	DisplayEarthquakes.class \
